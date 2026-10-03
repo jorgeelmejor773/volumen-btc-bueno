@@ -4,13 +4,19 @@ import { OrderBook } from '../types';
 interface Props {
   book: OrderBook;
   lastPrice: number;
+  symbol: string;
 }
 
 function fmt(n: number, dec = 2) {
+  if (n === 0) return '0.00';
+  if (n < 0.01) return n.toFixed(4);
+  if (n < 1) return n.toFixed(3);
   return n.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
 }
 
-export const OrderBookPanel: React.FC<Props> = ({ book, lastPrice }) => {
+export const OrderBookPanel: React.FC<Props> = ({ book, lastPrice, symbol }) => {
+  const assetName = symbol.replace('USDT', '');
+
   const maxTotal = useMemo(() => {
     const allTotals = [...book.bids, ...book.asks].map((e) => e.total);
     return Math.max(...allTotals, 1);
@@ -26,7 +32,7 @@ export const OrderBookPanel: React.FC<Props> = ({ book, lastPrice }) => {
       <div className="px-3 py-2 border-b border-[#1a1a24] bg-[#0e0e14] flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2">
           <span className="text-[11px] font-bold text-slate-300 uppercase tracking-widest">
-            Order Book
+            Order Book {assetName}
           </span>
           <span className="px-1.5 py-0.5 rounded text-[9px] bg-[#1a1a28] text-amber-400 font-semibold border border-amber-500/20">
             Aggregated
@@ -41,7 +47,7 @@ export const OrderBookPanel: React.FC<Props> = ({ book, lastPrice }) => {
       {/* Encabezados de Columna */}
       <div className="grid grid-cols-3 px-3 py-1.5 text-[10px] font-bold uppercase text-slate-500 border-b border-[#151520] bg-[#0a0a0e] shrink-0">
         <span>Precio (USDT)</span>
-        <span className="text-right">Monto (BTC)</span>
+        <span className="text-right">Monto ({assetName})</span>
         <span className="text-right">Total Acum.</span>
       </div>
 
@@ -61,7 +67,7 @@ export const OrderBookPanel: React.FC<Props> = ({ book, lastPrice }) => {
                   style={{ width: `${widthPct}%` }}
                 />
                 <span className="relative font-semibold text-rose-400">
-                  {fmt(ask.price, 1)}
+                  {fmt(ask.price, 2)}
                 </span>
                 <span className="relative text-slate-300 text-right">
                   {ask.qty.toFixed(3)}
@@ -111,7 +117,7 @@ export const OrderBookPanel: React.FC<Props> = ({ book, lastPrice }) => {
                   style={{ width: `${widthPct}%` }}
                 />
                 <span className="relative font-semibold text-emerald-400">
-                  {fmt(bid.price, 1)}
+                  {fmt(bid.price, 2)}
                 </span>
                 <span className="relative text-slate-300 text-right">
                   {bid.qty.toFixed(3)}

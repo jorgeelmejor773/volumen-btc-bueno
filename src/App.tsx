@@ -16,12 +16,12 @@ export default function App() {
 
   return (
     <div className="h-screen w-screen flex flex-col bg-[#0d0d12] text-white overflow-hidden select-none font-mono">
-      {/* 1. Header Superior */}
+      {/* 1. Header Superior con selector de monedas */}
       <Header ticker={ticker} symbol={symbol} onSymbolChange={setSymbol} />
 
       {/* 2. Área Principal de Trabajo */}
       <div className="flex-1 flex w-full h-[calc(100vh-56px)] overflow-hidden">
-        {/* Panel Izquierdo / Central: Gráfico TapeSurf con Velas, Volumen y Heatmap */}
+        {/* Panel Izquierdo / Central: Gráfico TapeSurf con Velas, Volumen inferior y VPVR a la izquierda */}
         <div className="flex-1 h-full flex flex-col min-w-0">
           <TapeSurfChart symbol={symbol} orderBook={book} ticker={ticker} />
         </div>
@@ -30,17 +30,17 @@ export default function App() {
         <div className="w-[380px] lg:w-[420px] h-full flex flex-col border-l border-[#1a1a24] bg-[#0c0c10] shrink-0">
           {/* Order Book principal arriba */}
           <div className="h-[52%] border-b border-[#1a1a24] overflow-hidden">
-            <OrderBookPanel book={book} lastPrice={ticker?.price ?? 0} />
+            <OrderBookPanel book={book} lastPrice={ticker?.price ?? 0} symbol={symbol} />
           </div>
 
-          {/* Subpanel inferior: Trades y Liquidaciones en pestañas o split */}
+          {/* Subpanel inferior: Trades y Liquidaciones divididos en 2 columnas */}
           <div className="h-[48%] flex flex-col overflow-hidden">
             <div className="grid grid-cols-2 h-full">
-              <div className="border-r border-[#1a1a24] h-full overflow-hidden">
-                <TradesFeed trades={trades} />
+              <div className="h-full overflow-hidden">
+                <TradesFeed trades={trades} symbol={symbol} />
               </div>
               <div className="h-full overflow-hidden">
-                <LiquidationsFeed liquidations={liquidations} />
+                <LiquidationsFeed liquidations={liquidations} symbol={symbol} />
               </div>
             </div>
           </div>
